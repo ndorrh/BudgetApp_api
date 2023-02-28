@@ -14,15 +14,23 @@ class  Api::V1::MyTransactionsController < ApplicationController
   def create
     @my_transaction = MyTransaction.new(transaction_params.except(:categories))
     @my_transaction.author = @current_user
+
+    if params[:categories].length <1
+      render json: {errors: "You must select at least one category"}, status: 503
+    else
+    
+      create_or_delete_category_transactions(@my_transaction, params[:categories])
     if @my_transaction.save
       render json: @my_transaction, status: 201
     else
       render json: {errors: @my_transaction.errors.full_messages}, status: 503
     end 
+    end
   end
 
   def update
-    if @my_transaction.update(transaction_params)
+     create_or_delete_category_transactions(@my_transaction, params[:categories])
+    if @my_transaction.update(transaction_params.except(:categories))
       render json: @my_transaction, status: 200
     else
       render json: {errors: @my_transaction.errors.full_messages}, status: 503
@@ -38,6 +46,13 @@ class  Api::V1::MyTransactionsController < ApplicationController
   end
 
   private
+   def create_or_delete_category_transactions(my_transaction, categories)
+    my_transaction.category_transactions.destroy_all
+    categories.each do |category_id|
+      CategoryTransaction.create(my_transaction:, category: Category.find(category_id.to_i)) if category_id != ''
+    end
+   end
+
   def transaction_params
     params.require(:my_transaction).permit( :name, :amount, categories: [])
   end
