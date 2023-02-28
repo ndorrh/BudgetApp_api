@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :users
       resources :my_transactions
+      resources :categories
       post '/auth/login', to: 'authentication#login'
     end
   end
