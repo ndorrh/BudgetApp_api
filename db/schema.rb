@@ -10,19 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_27_210902) do
+ActiveRecord::Schema[7.0].define(version: 2023_02_28_071740) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "my_transactions", force: :cascade do |t|
+    t.string "name"
+    t.decimal "amount"
+    t.bigint "author_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_my_transactions_on_author_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "user_name", default: "", null: false
     t.string "email", default: "", null: false
-    t.string "Password_digest", default: "", null: false
+    t.string "password_digest", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["user_name"], name: "index_users_on_user_name", unique: true
   end
 
+  add_foreign_key "my_transactions", "users", column: "author_id"
 end
