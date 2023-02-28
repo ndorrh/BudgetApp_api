@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_secure_password
+  has_many :my_transactions, foreign_key: 'author_id', dependent: :destroy
 
   #Add validation to attributes
   validates :name, presence: true, length: { maximum: 50 }
