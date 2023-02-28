@@ -4,7 +4,7 @@ class Api::V1::CategoriesController < ApplicationController
 
   def index
     @categories = Category.all
-    render json: @categories, status: 200
+    render json: @categories, include: [:my_transactions ], status: 200
   end
 
    def show
